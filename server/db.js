@@ -4,14 +4,16 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 console.log('Database connecting...');
-if (!process.env.DATABASE_URL) {
-    console.error('DATABASE_URL is missing!');
+const connectionString = process.env.NETLIFY_DATABASE_URL || process.env.DATABASE_URL;
+
+if (!connectionString) {
+    console.error('DATABASE_URL is missing! Checked both NETLIFY_DATABASE_URL and DATABASE_URL');
 } else {
-    console.log('DATABASE_URL found (length:', process.env.DATABASE_URL.length, ')');
+    console.log('Database connection string found');
 }
 
 const pool = new pg.Pool({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: connectionString,
     ssl: {
         rejectUnauthorized: false
     }
