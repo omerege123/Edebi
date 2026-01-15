@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 import DashboardLayout from '../components/Layout/DashboardLayout';
 import { useBadges } from '../context/BadgeContext';
 
@@ -38,7 +39,7 @@ const StudentDashboard: React.FC = () => {
 
     const fetchMyClasses = async (userId: number) => {
         try {
-            const response = await fetch(`http://localhost:3000/api/classes/student/${userId}`);
+            const response = await fetch(`${API_BASE_URL}/api/classes/student/${userId}`);
             const data = await response.json();
             setMyClasses(data);
         } catch (error) {
@@ -51,7 +52,7 @@ const StudentDashboard: React.FC = () => {
         if (!classCode.trim()) return;
 
         try {
-            const res = await fetch('http://localhost:3000/api/classes/join', {
+            const res = await fetch(`${API_BASE_URL}/api/classes/join`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ student_id: currentUser.id, sinif_kodu: classCode })
@@ -72,7 +73,7 @@ const StudentDashboard: React.FC = () => {
 
     const fetchAssignments = async (userId: number) => {
         try {
-            const response = await fetch(`http://localhost:3000/api/assignments/student/${userId}`);
+            const response = await fetch(`${API_BASE_URL}/api/assignments/student/${userId}`);
             const data = await response.json();
             setAssignments(data);
         } catch (error) {
@@ -83,7 +84,7 @@ const StudentDashboard: React.FC = () => {
 
     const fetchFeed = async (userId?: number) => {
         try {
-            const response = await fetch(`http://localhost:3000/api/quotes/approved?user_id=${userId || 0}`);
+            const response = await fetch(`${API_BASE_URL}/api/quotes/approved?user_id=${userId || 0}`);
             const data = await response.json();
             setFeedQuotes(data);
         } catch (error) {
@@ -93,7 +94,7 @@ const StudentDashboard: React.FC = () => {
 
     const fetchStats = async (userId: number) => {
         try {
-            const response = await fetch(`http://localhost:3000/api/dashboard/student/stats/${userId}`);
+            const response = await fetch(`${API_BASE_URL}/api/dashboard/student/stats/${userId}`);
             const data = await response.json();
             setRealStats(data);
             if (data.newlyEarnedBadges && data.newlyEarnedBadges.length > 0) {
@@ -107,7 +108,7 @@ const StudentDashboard: React.FC = () => {
     const handleLike = async (quoteId: number) => {
         if (!currentUser) return;
         try {
-            const res = await fetch(`http://localhost:3000/api/quotes/${quoteId}/like`, {
+            const res = await fetch(`${API_BASE_URL}/api/quotes/${quoteId}/like`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user_id: currentUser.id })
@@ -141,7 +142,7 @@ const StudentDashboard: React.FC = () => {
 
     const fetchComments = async (quoteId: number) => {
         try {
-            const res = await fetch(`http://localhost:3000/api/quotes/${quoteId}/comments`);
+            const res = await fetch(`${API_BASE_URL}/api/quotes/${quoteId}/comments`);
             if (res.ok) {
                 const data = await res.json();
                 setComments(data);
@@ -157,7 +158,7 @@ const StudentDashboard: React.FC = () => {
         if (!newComment.trim()) return;
 
         try {
-            const res = await fetch(`http://localhost:3000/api/quotes/${quoteId}/comments`, {
+            const res = await fetch(`${API_BASE_URL}/api/quotes/${quoteId}/comments`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user_id: currentUser.id, content: newComment })
@@ -261,7 +262,7 @@ const StudentDashboard: React.FC = () => {
                                             e.stopPropagation();
                                             if (window.confirm(`${c.sinif_adi} sınıfından ayrılmak istediğinize emin misiniz?`)) {
                                                 try {
-                                                    const res = await fetch('http://localhost:3000/api/classes/leave', {
+                                                    const res = await fetch(`${API_BASE_URL}/api/classes/leave`, {
                                                         method: 'POST',
                                                         headers: { 'Content-Type': 'application/json' },
                                                         body: JSON.stringify({ class_id: c.class_id, student_id: currentUser.id })

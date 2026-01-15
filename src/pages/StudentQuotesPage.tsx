@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../config';
 import DashboardLayout from '../components/Layout/DashboardLayout';
 
 const StudentQuotesPage: React.FC = () => {
@@ -26,7 +27,7 @@ const StudentQuotesPage: React.FC = () => {
 
     const fetchMyQuotes = async (userId: number) => {
         try {
-            const res = await fetch(`http://localhost:3000/api/quotes/user/${userId}`);
+            const res = await fetch(`${API_BASE_URL}/api/quotes/user/${userId}`);
             if (res.ok) {
                 const data = await res.json();
                 setQuotes(data);
@@ -38,7 +39,7 @@ const StudentQuotesPage: React.FC = () => {
 
     const fetchComments = async (quoteId: number) => {
         try {
-            const res = await fetch(`http://localhost:3000/api/quotes/${quoteId}/comments`);
+            const res = await fetch(`${API_BASE_URL}/api/quotes/${quoteId}/comments`);
             if (res.ok) {
                 const data = await res.json();
                 setComments(data);
@@ -53,7 +54,7 @@ const StudentQuotesPage: React.FC = () => {
     const handleComment = async (quoteId: number) => {
         if (!currentUser || !newComment.trim()) return;
         try {
-            const res = await fetch(`http://localhost:3000/api/quotes/${quoteId}/comments`, {
+            const res = await fetch(`${API_BASE_URL}/api/quotes/${quoteId}/comments`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../config';
 import DashboardLayout from '../components/Layout/DashboardLayout';
 
 const TeacherQuotesPage: React.FC = () => {
@@ -7,7 +8,7 @@ const TeacherQuotesPage: React.FC = () => {
 
     const fetchFeed = async () => {
         try {
-            const response = await fetch(`http://localhost:3000/api/quotes/approved`);
+            const response = await fetch(`${API_BASE_URL}/api/quotes/approved`);
             const data = await response.json();
             setFeedQuotes(data);
         } catch (error) {
@@ -23,7 +24,7 @@ const TeacherQuotesPage: React.FC = () => {
 
     const toggleNitelikli = async (quoteId: number) => {
         try {
-            const res = await fetch(`http://localhost:3000/api/quotes/${quoteId}/toggle-nitelikli`, {
+            const res = await fetch(`${API_BASE_URL}/api/quotes/${quoteId}/toggle-nitelikli`, {
                 method: 'POST'
             });
             if (res.ok) {

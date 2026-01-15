@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 
 const AssignBookPage: React.FC = () => {
     const navigate = useNavigate();
@@ -60,9 +61,9 @@ const AssignBookPage: React.FC = () => {
         const fetchData = async () => {
             try {
                 const [studentsRes, booksRes, classesRes] = await Promise.all([
-                    fetch('http://localhost:3000/api/students'),
-                    fetch('http://localhost:3000/api/books'),
-                    fetch(`http://localhost:3000/api/classes/teacher/${currentUser.id}`)
+                    fetch(`${API_BASE_URL}/api/students`),
+                    fetch(`${API_BASE_URL}/api/books`),
+                    fetch(`${API_BASE_URL}/api/classes/teacher/${currentUser.id}`)
                 ]);
 
                 if (!studentsRes.ok || !booksRes.ok || !classesRes.ok) {
@@ -117,7 +118,7 @@ const AssignBookPage: React.FC = () => {
         }
 
         try {
-            const endpoint = isStudentAssign ? 'http://localhost:3000/api/assignments' : 'http://localhost:3000/api/assignments/class';
+            const endpoint = isStudentAssign ? `${API_BASE_URL}/api/assignments` : `${API_BASE_URL}/api/assignments/class`;
             const bodyData: any = {
                 due_date: dueDate,
                 assignment_type: taskType

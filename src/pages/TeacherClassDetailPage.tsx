@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 import DashboardLayout from '../components/Layout/DashboardLayout';
 
 // Subcomponent for Weekly Tasks - Defined BEFORE usage
@@ -19,7 +20,7 @@ const WeeklyTasksManager: React.FC<{ classId: string }> = ({ classId }) => {
 
     const fetchTasks = async () => {
         try {
-            const res = await fetch(`http://localhost:3000/api/tasks/class/${classId}`);
+            const res = await fetch(`${API_BASE_URL}/api/tasks/class/${classId}`);
             if (res.ok) {
                 const data = await res.json();
                 setTasks(data);
@@ -35,7 +36,7 @@ const WeeklyTasksManager: React.FC<{ classId: string }> = ({ classId }) => {
 
         try {
             setLoading(true);
-            const res = await fetch('http://localhost:3000/api/tasks', {
+            const res = await fetch(`${API_BASE_URL}/api/tasks`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ class_id: Number(classId), content: newTask })
@@ -59,7 +60,7 @@ const WeeklyTasksManager: React.FC<{ classId: string }> = ({ classId }) => {
     const handleDeleteTask = async (taskId: number) => {
         if (!confirm('Bu görevi silmek istediğinize emin misiniz?')) return;
         try {
-            await fetch(`http://localhost:3000/api/tasks/${taskId}`, { method: 'DELETE' });
+            await fetch(`${API_BASE_URL}/api/tasks/${taskId}`, { method: 'DELETE' });
             setTasks(tasks.filter(t => t.task_id !== taskId));
         } catch (err) {
             console.error(err);
@@ -70,7 +71,7 @@ const WeeklyTasksManager: React.FC<{ classId: string }> = ({ classId }) => {
         setSelectedTask(task);
         setLoadingCompletions(true);
         try {
-            const res = await fetch(`http://localhost:3000/api/tasks/${task.task_id}/completions`);
+            const res = await fetch(`${API_BASE_URL}/api/tasks/${task.task_id}/completions`);
             if (res.ok) {
                 const data = await res.json();
                 setCompletions(data);
@@ -84,7 +85,7 @@ const WeeklyTasksManager: React.FC<{ classId: string }> = ({ classId }) => {
 
     const handleRate = async (studentId: number, rating: number) => {
         try {
-            const res = await fetch(`http://localhost:3000/api/tasks/${selectedTask.task_id}/grade`, {
+            const res = await fetch(`${API_BASE_URL}/api/tasks/${selectedTask.task_id}/grade`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ student_id: studentId, rating })
@@ -270,7 +271,7 @@ const TeacherClassDetailPage: React.FC = () => {
             setLoading(true);
 
             // Fetch class info
-            const classesRes = await fetch(`http://localhost:3000/api/classes/teacher/${teacherId}`);
+            const classesRes = await fetch(`${API_BASE_URL}/api/classes/teacher/${teacherId}`);
             if (classesRes.ok) {
                 const classesData = await classesRes.json();
                 const currentCls = classesData.find((c: any) => c.class_id === parseInt(id || '0'));
@@ -278,14 +279,14 @@ const TeacherClassDetailPage: React.FC = () => {
             }
 
             // Fetch students in class
-            const studentsRes = await fetch(`http://localhost:3000/api/classes/${id}/students`);
+            const studentsRes = await fetch(`${API_BASE_URL}/api/classes/${id}/students`);
             if (studentsRes.ok) {
                 const studentsData = await studentsRes.json();
                 setStudents(studentsData);
             }
 
             // Fetch all assignments linked to this class
-            const assignmentsRes = await fetch(`http://localhost:3000/api/teacher/class/${id}/assignments`);
+            const assignmentsRes = await fetch(`${API_BASE_URL}/api/teacher/class/${id}/assignments`);
             if (assignmentsRes.ok) {
                 const assignmentsData = await assignmentsRes.json();
                 setAssignments(assignmentsData);

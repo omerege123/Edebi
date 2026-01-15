@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../config';
 import DashboardLayout from '../components/Layout/DashboardLayout';
 
 const StudentBooksPage: React.FC = () => {
-    const [assignments, setAssignments] = React.useState<any[]>([]);
-    const [loading, setLoading] = React.useState(true);
+    const [assignments, setAssignments] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const userStr = localStorage.getItem('user');
         if (userStr) {
             const user = JSON.parse(userStr);
@@ -16,7 +17,7 @@ const StudentBooksPage: React.FC = () => {
     const fetchAssignments = async (userId: number) => {
         try {
             setLoading(true);
-            const response = await fetch(`http://localhost:3000/api/assignments/student/${userId}`);
+            const response = await fetch(`${API_BASE_URL}/api/assignments/student/${userId}`);
             const data = await response.json();
             console.log('📚 [BooksPage] Fetched assignments:', data);
             console.log('🏫 [BooksPage] Class assignments:', data.filter((a: any) => a.class_id !== null));

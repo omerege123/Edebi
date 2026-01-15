@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 import DashboardLayout from '../components/Layout/DashboardLayout';
 
 const ClassDetailPage: React.FC = () => {
@@ -22,7 +23,7 @@ const ClassDetailPage: React.FC = () => {
             setLoading(true);
 
             // Fetch student's classes to find this specific one (or a dedicated endpoint)
-            const classesRes = await fetch(`http://localhost:3000/api/classes/student/${userId}`);
+            const classesRes = await fetch(`${API_BASE_URL}/api/classes/student/${userId}`);
             if (classesRes.ok) {
                 const classesData = await classesRes.json();
                 const currentCls = classesData.find((c: any) => c.class_id === parseInt(id || '0'));
@@ -30,7 +31,7 @@ const ClassDetailPage: React.FC = () => {
             }
 
             // Fetch assignments filtered by class
-            const assignmentsRes = await fetch(`http://localhost:3000/api/assignments/student/${userId}?class_id=${id}`);
+            const assignmentsRes = await fetch(`${API_BASE_URL}/api/assignments/student/${userId}?class_id=${id}`);
             if (assignmentsRes.ok) {
                 const assignmentsData = await assignmentsRes.json();
                 setAssignments(assignmentsData);

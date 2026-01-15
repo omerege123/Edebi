@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../config';
 import DashboardLayout from '../components/Layout/DashboardLayout';
 import { useBadges } from '../context/BadgeContext';
 
@@ -30,15 +31,15 @@ const BadgesPage: React.FC = () => {
         try {
             // First trigger global check and get unseen badges via stats or specific endpoint
             // We'll use the stats call as it's the standard way we've set up for students
-            const statsRes = await fetch(`http://localhost:3000/api/dashboard/student/stats/${userId}`);
+            const statsRes = await fetch(`${API_BASE_URL}/api/dashboard/student/stats/${userId}`);
             const statsData = await statsRes.json();
             if (statsData.newlyEarnedBadges && statsData.newlyEarnedBadges.length > 0) {
                 showBadges(statsData.newlyEarnedBadges);
             }
 
             const [badgesRes, userBadgesRes] = await Promise.all([
-                fetch('http://localhost:3000/api/badges'),
-                fetch(`http://localhost:3000/api/badges/user/${userId}`)
+                fetch(`${API_BASE_URL}/api/badges`),
+                fetch(`${API_BASE_URL}/api/badges/user/${userId}`)
             ]);
 
             if (badgesRes.ok && userBadgesRes.ok) {

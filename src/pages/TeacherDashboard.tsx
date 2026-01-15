@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { API_BASE_URL } from '../config';
 import DashboardLayout from '../components/Layout/DashboardLayout';
 
 const TeacherDashboard: React.FC = () => {
-    const [stats, setStats] = React.useState({
+    const [stats, setStats] = useState({
         studentCount: 0,
         pendingCount: 0,
         completionRate: 0,
@@ -16,13 +17,13 @@ const TeacherDashboard: React.FC = () => {
     const fetchData = React.useCallback(async () => {
         try {
             const statsUrl = selectedClass === 'all'
-                ? 'http://localhost:3000/api/dashboard/teacher/stats'
-                : `http://localhost:3000/api/dashboard/teacher/stats?class_id=${selectedClass}`;
+                ? `${API_BASE_URL}/api/dashboard/teacher/stats`
+                : `${API_BASE_URL}/api/dashboard/teacher/stats?class_id=${selectedClass}`;
 
             const [statsRes, quotesRes, classesRes] = await Promise.all([
                 fetch(statsUrl),
-                fetch('http://localhost:3000/api/quotes/pending'),
-                fetch(`http://localhost:3000/api/classes/teacher/${JSON.parse(localStorage.getItem('user') || '{}').id}`)
+                fetch(`${API_BASE_URL}/api/quotes/pending`),
+                fetch(`${API_BASE_URL}/api/classes/teacher/${JSON.parse(localStorage.getItem('user') || '{}').id}`)
             ]);
 
             const statsData = await statsRes.json();
@@ -46,7 +47,7 @@ const TeacherDashboard: React.FC = () => {
 
     const handleApproval = async (id: number, status: 'onaylandi' | 'reddedildi') => {
         try {
-            await fetch(`http://localhost:3000/api/quotes/${id}/status`, {
+            await fetch(`${API_BASE_URL}/api/quotes/${id}/status`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status })

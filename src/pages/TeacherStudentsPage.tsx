@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 import DashboardLayout from '../components/Layout/DashboardLayout';
 
 interface ClassData {
@@ -39,7 +40,7 @@ const TeacherStudentsPage: React.FC = () => {
 
     const fetchClasses = async (teacherId: number) => {
         try {
-            const res = await fetch(`http://localhost:3000/api/classes/teacher/${teacherId}`);
+            const res = await fetch(`${API_BASE_URL}/api/classes/teacher/${teacherId}`);
             if (res.ok) {
                 const data = await res.json();
                 setClasses(data);
@@ -55,7 +56,7 @@ const TeacherStudentsPage: React.FC = () => {
 
     const fetchStudents = async (classId: number) => {
         try {
-            const res = await fetch(`http://localhost:3000/api/classes/${classId}/students`);
+            const res = await fetch(`${API_BASE_URL}/api/classes/${classId}/students`);
             if (res.ok) {
                 const data = await res.json();
                 setStudents(data);
@@ -70,7 +71,7 @@ const TeacherStudentsPage: React.FC = () => {
         if (!newClassName.trim()) return;
 
         try {
-            const res = await fetch('http://localhost:3000/api/classes', {
+            const res = await fetch(`${API_BASE_URL}/api/classes`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -99,7 +100,7 @@ const TeacherStudentsPage: React.FC = () => {
         if (!window.confirm('Bu sınıfı silmek istediğinize emin misiniz? Sınıf içindeki tüm kayıtlar silinecektir.')) return;
 
         try {
-            const res = await fetch(`http://localhost:3000/api/classes/${classId}`, {
+            const res = await fetch(`${API_BASE_URL}/api/classes/${classId}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ teacher_id: currentUser.id })
@@ -122,7 +123,7 @@ const TeacherStudentsPage: React.FC = () => {
         if (!window.confirm('Öğrenciyi sınıftan çıkarmak istediğinize emin misiniz?')) return;
 
         try {
-            const res = await fetch(`http://localhost:3000/api/classes/${selectedClassId}/students/${studentId}`, {
+            const res = await fetch(`${API_BASE_URL}/api/classes/${selectedClassId}/students/${studentId}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ teacher_id: currentUser.id })

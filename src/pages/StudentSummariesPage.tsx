@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 import DashboardLayout from '../components/Layout/DashboardLayout';
 
 interface Assignment {
@@ -34,7 +35,7 @@ const StudentSummariesPage: React.FC = () => {
             const user = JSON.parse(userStr);
 
             try {
-                const res = await fetch(`http://localhost:3000/api/assignments/student/${user.id}`);
+                const res = await fetch(`${API_BASE_URL}/api/assignments/student/${user.id}`);
                 if (res.ok) {
                     const data = await res.json();
                     console.log('Fetched summaries:', data); // Debug logging

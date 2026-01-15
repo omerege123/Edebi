@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 import DashboardLayout from '../components/Layout/DashboardLayout';
 
 const AssignmentDetailsPage: React.FC = () => {
@@ -13,7 +14,7 @@ const AssignmentDetailsPage: React.FC = () => {
             try {
                 // Find this specific assignment from the user's list
                 const user = JSON.parse(localStorage.getItem('user') || '{}');
-                const res = await fetch(`http://localhost:3000/api/assignments/student/${user.id}`);
+                const res = await fetch(`${API_BASE_URL}/api/assignments/student/${user.id}`);
                 if (res.ok) {
                     const data = await res.json();
                     const item = data.find((a: any) => a.assignment_id === parseInt(id || '0'));

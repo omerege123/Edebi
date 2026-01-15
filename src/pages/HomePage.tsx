@@ -1,4 +1,5 @@
 import React from 'react';
+import { API_BASE_URL } from '../config';
 import { useBadges } from '../context/BadgeContext';
 
 const HomePage: React.FC = () => {
@@ -17,7 +18,7 @@ const HomePage: React.FC = () => {
         const fetchExplore = async () => {
             try {
                 const userId = user ? JSON.parse(user).id : 0;
-                const res = await fetch(`http://localhost:3000/api/quotes/approved?user_id=${userId}`);
+                const res = await fetch(`${API_BASE_URL}/api/quotes/approved?user_id=${userId}`);
                 if (res.ok) {
                     const data = await res.json();
                     setExploreQuotes(data);
@@ -29,7 +30,7 @@ const HomePage: React.FC = () => {
 
         const fetchLeaderboard = async () => {
             try {
-                const res = await fetch('http://localhost:3000/api/quotes/leaderboard');
+                const res = await fetch(`${API_BASE_URL}/api/quotes/leaderboard`);
                 if (res.ok) {
                     const data = await res.json();
                     setLeaderboard(data);
@@ -46,7 +47,7 @@ const HomePage: React.FC = () => {
     const handleLike = async (quoteId: number) => {
         if (!currentUser) return alert('Beğenmek için giriş yapmalısın!');
         try {
-            const res = await fetch(`http://localhost:3000/api/quotes/${quoteId}/like`, {
+            const res = await fetch(`${API_BASE_URL}/api/quotes/${quoteId}/like`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user_id: currentUser.id })
@@ -81,7 +82,7 @@ const HomePage: React.FC = () => {
 
     const fetchComments = async (quoteId: number) => {
         try {
-            const res = await fetch(`http://localhost:3000/api/quotes/${quoteId}/comments`);
+            const res = await fetch(`${API_BASE_URL}/api/quotes/${quoteId}/comments`);
             if (res.ok) {
                 const data = await res.json();
                 setComments(data);
@@ -97,7 +98,7 @@ const HomePage: React.FC = () => {
         if (!newComment.trim()) return;
 
         try {
-            const res = await fetch(`http://localhost:3000/api/quotes/${quoteId}/comments`, {
+            const res = await fetch(`${API_BASE_URL}/api/quotes/${quoteId}/comments`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user_id: currentUser.id, content: newComment })
@@ -125,7 +126,7 @@ const HomePage: React.FC = () => {
     const handleDeleteComment = async (commentId: number) => {
         if (!window.confirm('Bu yorumu silmek istediğinize emin misiniz?')) return;
         try {
-            const res = await fetch(`http://localhost:3000/api/comments/${commentId}`, {
+            const res = await fetch(`${API_BASE_URL}/api/comments/${commentId}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ teacher_id: currentUser.id })
@@ -146,7 +147,7 @@ const HomePage: React.FC = () => {
         if (!reason) return;
 
         try {
-            const res = await fetch(`http://localhost:3000/api/quotes/${quoteId}/report`, {
+            const res = await fetch(`${API_BASE_URL}/api/quotes/${quoteId}/report`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user_id: currentUser.id, reason })

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../config';
 import DashboardLayout from '../components/Layout/DashboardLayout';
 
 // Task Item Component for better organization and state management
@@ -160,7 +161,7 @@ const StudentTasksPage: React.FC = () => {
 
     const fetchClasses = async (studentId: number) => {
         try {
-            const res = await fetch(`http://localhost:3000/api/classes/student/${studentId}`);
+            const res = await fetch(`${API_BASE_URL}/api/classes/student/${studentId}`);
             if (res.ok) {
                 const data = await res.json();
                 setClasses(data);
@@ -179,7 +180,7 @@ const StudentTasksPage: React.FC = () => {
 
     const fetchTasksForClass = async (classId: number, studentId: number) => {
         try {
-            const res = await fetch(`http://localhost:3000/api/tasks/class/${classId}?student_id=${studentId}`);
+            const res = await fetch(`${API_BASE_URL}/api/tasks/class/${classId}?student_id=${studentId}`);
             if (res.ok) {
                 const data = await res.json();
                 setTasksByClass(prev => ({
@@ -196,7 +197,7 @@ const StudentTasksPage: React.FC = () => {
         if (!userId) return;
 
         try {
-            const res = await fetch(`http://localhost:3000/api/tasks/${taskId}/toggle`, {
+            const res = await fetch(`${API_BASE_URL}/api/tasks/${taskId}/toggle`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

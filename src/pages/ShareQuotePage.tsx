@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 import { useBadges } from '../context/BadgeContext';
 
 const ShareQuotePage: React.FC = () => {
@@ -26,7 +27,7 @@ const ShareQuotePage: React.FC = () => {
         // Fetch books
         const fetchBooks = async () => {
             try {
-                const res = await fetch('http://localhost:3000/api/books');
+                const res = await fetch(`${API_BASE_URL}/api/books`);
                 if (res.ok) {
                     const data = await res.json();
                     setBooks(Array.isArray(data) ? data : []);
@@ -53,7 +54,7 @@ const ShareQuotePage: React.FC = () => {
         }
 
         try {
-            const res = await fetch('http://localhost:3000/api/quotes', {
+            const res = await fetch(`${API_BASE_URL}/api/quotes`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

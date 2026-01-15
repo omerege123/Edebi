@@ -4,6 +4,7 @@ import db from './db.js';
 import { checkAndGrantBadges, getUnseenBadges } from './badgeService.js';
 
 const app = express();
+export { app };
 const port = 3000;
 
 app.use(cors());
@@ -21,7 +22,7 @@ app.use((req, res, next) => {
 // Test Endpoint
 app.get('/api/health', async (req, res) => {
     try {
-        const result = await db.query('SELECT date("now") as now');
+        const result = await db.query('SELECT CURRENT_DATE as now');
         res.json({
             status: 'ok',
             message: 'Database connected successfully',
@@ -1306,6 +1307,8 @@ app.get('/api/teacher/class/:classId/assignments', async (req, res) => {
     }
 });
 
-app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
-});
+if (process.env.NODE_ENV !== 'production' || !process.env.NETLIFY) {
+    app.listen(port, () => {
+        console.log(`Server running on http://localhost:${port}`);
+    });
+}

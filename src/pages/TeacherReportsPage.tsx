@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 
 const TeacherReportsPage: React.FC = () => {
     const location = useLocation();
@@ -30,7 +31,7 @@ const TeacherReportsPage: React.FC = () => {
 
     const fetchData = async () => {
         try {
-            const baseUrl = 'http://localhost:3000/api';
+            const baseUrl = `${API_BASE_URL}/api`;
             const filterParam = selectedClassId !== 'all' ? `?class_id=${selectedClassId}` : '';
 
             const [reportsRes, activityRes, summariesRes, classesRes] = await Promise.all([
@@ -57,7 +58,7 @@ const TeacherReportsPage: React.FC = () => {
 
         try {
             if (action === 'delete') {
-                await fetch(`http://localhost:3000/api/quotes/${quoteId}/status`, {
+                await fetch(`${API_BASE_URL}/api/quotes/${quoteId}/status`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ status: 'reddedildi' })
@@ -92,7 +93,7 @@ const TeacherReportsPage: React.FC = () => {
         console.log('  Feedback:', feedback);
 
         try {
-            const res = await fetch(`http://localhost:3000/api/assignments/${assignmentId}/${action}`, {
+            const res = await fetch(`${API_BASE_URL}/api/assignments/${assignmentId}/${action}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ feedback, score })
