@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import DashboardLayout from '../components/Layout/DashboardLayout';
 
 // Task Item Component for better organization and state management
-const TaskItem: React.FC<{ task: any, userId: number, onToggle: (id: number, text?: string) => Promise<void> }> = ({ task, userId, onToggle }) => {
+const TaskItem: React.FC<{ task: any, onToggle: (id: number, text?: string) => Promise<void> }> = ({ task, onToggle }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [responseText, setResponseText] = useState('');
     const [submitting, setSubmitting] = useState(false);
@@ -261,7 +261,6 @@ const StudentTasksPage: React.FC = () => {
                                             <TaskItem
                                                 key={task.task_id}
                                                 task={task}
-                                                userId={userId!}
                                                 onToggle={handleToggleTask}
                                             />
                                         ))}

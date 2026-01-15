@@ -10,7 +10,7 @@ const AssignBookPage: React.FC = () => {
 
     // Form state
     const [assignType, setAssignType] = useState<'student' | 'class'>('student');
-    const [taskType, setTaskType] = useState<'book' | 'writing'>('book');
+    const [taskType] = useState<'book' | 'writing'>('book');
     const [selectedStudent, setSelectedStudent] = useState('');
     const [selectedClassId, setSelectedClassId] = useState('');
     const [selectedBookId, setSelectedBookId] = useState('');
