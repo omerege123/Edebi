@@ -53,9 +53,9 @@ const LoginPage: React.FC = () => {
             justifyContent: 'center',
             alignItems: 'center',
             minHeight: '80vh',
-            padding: '2rem'
+            padding: '1rem'
         }}>
-            <div className="card" style={{ width: '100%', maxWidth: '400px', padding: '2.5rem' }}>
+            <div className="card" style={{ width: '100%', maxWidth: '400px', padding: 'clamp(1.5rem, 5vw, 2.5rem)' }}>
                 <h2 style={{ textAlign: 'center', marginBottom: '0.5rem' }}>Giriş Yap</h2>
                 <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', marginBottom: '2rem' }}>
                     Edebi serüvenine kaldığın yerden devam et.

@@ -165,33 +165,35 @@ const HomePage: React.FC = () => {
             {/* Hero Section */}
             <section style={{
                 background: 'linear-gradient(to bottom, var(--neutral-50), white)',
-                padding: '6rem 0',
+                padding: 'clamp(3rem, 10vw, 6rem) 0',
                 textAlign: 'center'
             }}>
                 <div className="container">
                     <h1 style={{
-                        fontSize: '3.5rem',
+                        fontSize: 'clamp(2rem, 8vw, 3.5rem)',
                         marginBottom: '1.5rem',
                         background: 'linear-gradient(135deg, var(--color-primary), var(--neutral-800))',
                         WebkitBackgroundClip: 'text',
                         WebkitTextFillColor: 'transparent',
-                        display: 'inline-block'
+                        display: 'inline-block',
+                        lineHeight: 1.2
                     }}>
-                        Satır Arasında Kalanı <br /> Yeniden Düşünmek
+                        Satır Arasında Kalanı <br className="mobile-hidden" /> Yeniden Düşünmek
                     </h1>
                     <p style={{
-                        fontSize: '1.25rem',
+                        fontSize: 'clamp(1rem, 4vw, 1.25rem)',
                         color: 'var(--neutral-600)',
                         maxWidth: '700px',
-                        margin: '0 auto 2.5rem'
+                        margin: '0 auto 2.5rem',
+                        padding: '0 1rem'
                     }}>
                         Edebi Kıvılcım ile okuduğun kitaplardan alıntılar paylaş, rozetler kazan ve okul arkadaşlarınla edebi bir yolculuğa çık.
                     </p>
-                    <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-                        <button className="btn btn-primary" style={{ fontSize: '1.1rem', padding: '1rem 2rem' }} onClick={() => window.location.href = '/register'}>
+                    <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexDirection: 'row', flexWrap: 'wrap' }}>
+                        <button className="btn btn-primary" style={{ padding: '0.75rem 1.5rem' }} onClick={() => window.location.href = '/register'}>
                             Hemen Başla
                         </button>
-                        <button className="btn btn-outline" style={{ fontSize: '1.1rem', padding: '1rem 2rem' }}>
+                        <button className="btn btn-outline" style={{ padding: '0.75rem 1.5rem' }}>
                             Platformu Keşfet
                         </button>
                     </div>

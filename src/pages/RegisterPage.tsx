@@ -45,9 +45,9 @@ const RegisterPage: React.FC = () => {
             justifyContent: 'center',
             alignItems: 'center',
             minHeight: '80vh',
-            padding: '2rem'
+            padding: '1rem'
         }}>
-            <div className="card" style={{ width: '100%', maxWidth: '500px', padding: '2.5rem' }}>
+            <div className="card" style={{ width: '100%', maxWidth: '500px', padding: 'clamp(1.5rem, 5vw, 2.5rem)' }}>
                 <h2 style={{ textAlign: 'center', marginBottom: '0.5rem' }}>Aramıza Katıl</h2>
                 <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', marginBottom: '2rem' }}>
                     Edebi Kıvılcım ailesinin bir parçası ol.
@@ -104,7 +104,7 @@ const RegisterPage: React.FC = () => {
                 )}
 
                 <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '1rem' }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div className="responsive-grid responsive-grid-2">
                         <div>
                             <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Ad</label>
                             <input

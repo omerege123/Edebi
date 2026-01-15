@@ -2,8 +2,61 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
-    // const [isMenuOpen, setIsMenuOpen] = useState(false); // Mobile menu to be implemented
+    const [isMenuOpen, setIsMenuOpen] = React.useState(false);
     const navigate = useNavigate();
+
+    const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null;
+
+    const NavLinks = () => (
+        <>
+            <Link to="/" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--neutral-600)', fontWeight: 500 }}>Keşfet</Link>
+            {user ? (
+                <>
+                    {user.rol === 'ogrenci' && (
+                        <>
+                            <Link to="/dashboard/student" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--neutral-600)', fontWeight: 500 }}>Panelim</Link>
+                            <Link to="/dashboard/tasks" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--neutral-600)', fontWeight: 500 }}>Haftalık Görevler</Link>
+                            <Link to="/share-quote" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Paylaşım Yap</Link>
+                        </>
+                    )}
+                    {user.rol === 'ogretmen' && (
+                        <>
+                            <Link to="/dashboard/teacher" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--neutral-600)', fontWeight: 500 }}>Panelim</Link>
+                            <Link to="/dashboard/reports" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--neutral-600)', fontWeight: 500 }}>Onaylar</Link>
+                        </>
+                    )}
+                    <button
+                        className="btn btn-outline"
+                        style={{ padding: '0.4rem 0.8rem', fontSize: '0.9rem' }}
+                        onClick={() => {
+                            localStorage.removeItem('user');
+                            setIsMenuOpen(false);
+                            navigate('/login');
+                        }}
+                    >
+                        Çıkış Yap
+                    </button>
+                </>
+            ) : (
+                <div style={{ display: 'flex', gap: '1rem', flexDirection: 'inherit' }}>
+                    <button
+                        className="btn btn-outline"
+                        style={{ padding: '0.5rem 1.25rem' }}
+                        onClick={() => { setIsMenuOpen(false); navigate('/login'); }}
+                    >
+                        Giriş Yap
+                    </button>
+                    <button
+                        className="btn btn-primary"
+                        style={{ padding: '0.5rem 1.25rem' }}
+                        onClick={() => { setIsMenuOpen(false); navigate('/register'); }}
+                    >
+                        Kayıt Ol
+                    </button>
+                </div>
+            )}
+        </>
+    );
 
     return (
         <nav style={{
@@ -18,80 +71,63 @@ const Navbar: React.FC = () => {
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                height: '4rem'
+                height: '4.5rem'
             }}>
                 {/* Logo Section */}
-                <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none' }}>
+                <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}>
                     <img
                         src="/src/assets/logo.png"
-                        alt="Edebi Kıvılcım"
+                        alt="Logo"
                         style={{
-                            height: '3.5rem',
+                            height: '2.5rem',
                             borderRadius: '50%'
                         }}
                     />
                     <span style={{
-                        fontSize: '1.5rem',
+                        fontSize: 'clamp(1.1rem, 4vw, 1.3rem)',
                         fontWeight: 700,
                         fontFamily: 'var(--font-serif)',
                         background: 'linear-gradient(135deg, var(--color-primary), var(--neutral-800))',
                         WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        letterSpacing: '-0.02em'
+                        WebkitTextFillColor: 'transparent'
                     }}>
                         Edebi Kıvılcım
                     </span>
                 </Link>
 
                 {/* Desktop Navigation */}
-                <div className="hidden-mobile" style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-                    <Link to="/" style={{ color: 'var(--neutral-600)', fontWeight: 500, textDecoration: 'none' }}>Keşfet</Link>
-
-                    {localStorage.getItem('user') ? (
-                        <>
-                            {JSON.parse(localStorage.getItem('user')!).rol === 'ogrenci' && (
-                                <>
-                                    <Link to="/dashboard/student" style={{ color: 'var(--neutral-600)', fontWeight: 500, textDecoration: 'none' }}>Panelim</Link>
-                                    <Link to="/dashboard/tasks" style={{ color: 'var(--neutral-600)', fontWeight: 500, textDecoration: 'none' }}>Haftalık Görevler</Link>
-                                    <Link to="/share-quote" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Paylaşım Yap</Link>
-                                </>
-                            )}
-                            {JSON.parse(localStorage.getItem('user')!).rol === 'ogretmen' && (
-                                <>
-                                    <Link to="/dashboard/teacher" style={{ color: 'var(--neutral-600)', fontWeight: 500, textDecoration: 'none' }}>Panelim</Link>
-                                    <Link to="/dashboard/reports" style={{ color: 'var(--neutral-600)', fontWeight: 500, textDecoration: 'none' }}>Onaylar</Link>
-                                </>
-                            )}
-                            <button
-                                className="btn btn-outline"
-                                style={{ padding: '0.4rem 0.8rem', fontSize: '0.9rem' }}
-                                onClick={() => {
-                                    localStorage.removeItem('user');
-                                    navigate('/login');
-                                }}
-                            >
-                                Çıkış Yap
-                            </button>
-                        </>
-                    ) : (
-                        <div style={{ display: 'flex', gap: '1rem', marginLeft: '1rem' }}>
-                            <button
-                                className="btn btn-outline"
-                                style={{ padding: '0.5rem 1rem' }}
-                                onClick={() => navigate('/login')}
-                            >
-                                Giriş Yap
-                            </button>
-                            <button className="btn btn-primary" style={{ padding: '0.5rem 1rem' }} onClick={() => navigate('/register')}>
-                                Kayıt Ol
-                            </button>
-                        </div>
-                    )}
+                <div className="mobile-hidden" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+                    <NavLinks />
                 </div>
 
-                {/* Mobile Menu Button - for future responsiveness */}
-                {/* Placeholder for now */}
+                {/* Mobile Menu Toggle */}
+                <button
+                    className="desktop-hidden"
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', padding: '0.5rem' }}
+                >
+                    {isMenuOpen ? '✕' : '☰'}
+                </button>
             </div>
+
+            {/* Mobile Nav Overlay */}
+            {isMenuOpen && (
+                <div className="desktop-hidden" style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    right: 0,
+                    backgroundColor: 'white',
+                    borderBottom: '1px solid var(--color-border)',
+                    padding: '1.5rem',
+                    flexDirection: 'column',
+                    display: 'flex',
+                    gap: '1.25rem',
+                    boxShadow: 'var(--shadow-lg)'
+                }}>
+                    <NavLinks />
+                </div>
+            )}
         </nav>
     );
 };
