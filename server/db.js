@@ -3,6 +3,13 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+console.log('Database connecting...');
+if (!process.env.DATABASE_URL) {
+    console.error('DATABASE_URL is missing!');
+} else {
+    console.log('DATABASE_URL found (length:', process.env.DATABASE_URL.length, ')');
+}
+
 const pool = new pg.Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: {
@@ -10,9 +17,12 @@ const pool = new pg.Pool({
     }
 });
 
+pool.on('connect', () => {
+    console.log('PostgreSQL Pool connected');
+});
+
 pool.on('error', (err) => {
     console.error('Unexpected error on idle client', err);
-    process.exit(-1);
 });
 
 export default {

@@ -10,8 +10,10 @@ const port = 3000;
 app.use(cors());
 app.use(express.json());
 
+const router = express.Router();
+
 // Request logging middleware
-app.use((req, res, next) => {
+router.use((req, res, next) => {
     console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
     if (req.method === 'POST' || req.method === 'PUT') {
         console.log('Body:', req.body);
@@ -20,7 +22,7 @@ app.use((req, res, next) => {
 });
 
 // Test Endpoint
-app.get('/api/health', async (req, res) => {
+router.get('/health', async (req, res) => {
     try {
         const result = await db.query('SELECT CURRENT_DATE as now');
         res.json({
@@ -39,7 +41,7 @@ app.get('/api/health', async (req, res) => {
 });
 
 // Teacher Dashboard Stats
-app.get('/api/dashboard/teacher/stats', async (req, res) => {
+router.get('/dashboard/teacher/stats', async (req, res) => {
     const { class_id } = req.query;
     try {
         let studentCountQuery = "SELECT COUNT(*) as count FROM users WHERE rol = 'ogrenci'";
@@ -119,7 +121,7 @@ app.get('/api/dashboard/teacher/stats', async (req, res) => {
 });
 
 // Get Pending Quotes
-app.get('/api/quotes/pending', async (req, res) => {
+router.get('/quotes/pending', async (req, res) => {
     try {
         const result = await db.query(`
             SELECT q.*, u.ad || ' ' || u.soyad as ogrenci_adi, b.kitap_adi 
@@ -137,7 +139,7 @@ app.get('/api/quotes/pending', async (req, res) => {
 });
 
 // Approve/Reject Quote
-app.put('/api/quotes/:id/status', async (req, res) => {
+router.put('/quotes/:id/status', async (req, res) => {
     const { id } = req.params;
     const { status } = req.body; // 'onaylandi' or 'reddedildi'
 
@@ -160,7 +162,7 @@ app.put('/api/quotes/:id/status', async (req, res) => {
 });
 
 // Toggle Nitelikli (Qualified) status
-app.post('/api/quotes/:id/toggle-nitelikli', async (req, res) => {
+router.post('/quotes/:id/toggle-nitelikli', async (req, res) => {
     const { id } = req.params;
     try {
         const quoteRes = await db.query("SELECT is_nitelikli, user_id FROM quotes WHERE quote_id = ?", [id]);
@@ -188,7 +190,7 @@ app.post('/api/quotes/:id/toggle-nitelikli', async (req, res) => {
 });
 
 // Auth Routes
-app.post('/api/register', async (req, res) => {
+router.post('/register', async (req, res) => {
     const { ad, soyad, kullanici_adi, e_posta, parola, rol } = req.body;
     try {
         // Check if user exists
@@ -225,7 +227,7 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-app.post('/api/login', async (req, res) => {
+router.post('/login', async (req, res) => {
     const { username, password, rol } = req.body;
 
     try {
@@ -272,7 +274,7 @@ app.post('/api/login', async (req, res) => {
 // --- Class Management Endpoints ---
 
 // Create Class (Teacher)
-app.post('/api/classes', async (req, res) => {
+router.post('/classes', async (req, res) => {
     const { teacher_id, sinif_adi } = req.body;
     if (!teacher_id || !sinif_adi) return res.status(400).json({ error: 'Eksik bilgi.' });
 
@@ -296,7 +298,7 @@ app.post('/api/classes', async (req, res) => {
 });
 
 // Delete Class (Teacher)
-app.delete('/api/classes/:id', async (req, res) => {
+router.delete('/classes/:id', async (req, res) => {
     const { id } = req.params;
     const { teacher_id } = req.body;
 
@@ -316,7 +318,7 @@ app.delete('/api/classes/:id', async (req, res) => {
 });
 
 // List Classes for a Teacher
-app.get('/api/classes/teacher/:teacherId', async (req, res) => {
+router.get('/classes/teacher/:teacherId', async (req, res) => {
     try {
         const result = await db.query(`
             SELECT c.*, (SELECT COUNT(*) FROM class_enrollments WHERE class_id = c.class_id) as ogrenci_sayisi
@@ -332,7 +334,7 @@ app.get('/api/classes/teacher/:teacherId', async (req, res) => {
 });
 
 // Join Class (Student)
-app.post('/api/classes/join', async (req, res) => {
+router.post('/classes/join', async (req, res) => {
     const { student_id, sinif_kodu } = req.body;
     if (!student_id || !sinif_kodu) return res.status(400).json({ error: 'Eksik bilgi.' });
 
@@ -360,7 +362,7 @@ app.post('/api/classes/join', async (req, res) => {
 });
 
 // List Students in a Class
-app.get('/api/classes/:classId/students', async (req, res) => {
+router.get('/classes/:classId/students', async (req, res) => {
     try {
         const result = await db.query(`
             SELECT u.user_id, u.ad, u.soyad, u.kullanici_adi, u.e_posta, ce.enrolled_at
@@ -377,7 +379,7 @@ app.get('/api/classes/:classId/students', async (req, res) => {
 });
 
 // Remove Student from Class (Teacher)
-app.delete('/api/classes/:classId/students/:studentId', async (req, res) => {
+router.delete('/classes/:classId/students/:studentId', async (req, res) => {
     const { classId, studentId } = req.params;
     const { teacher_id } = req.body;
 
@@ -396,7 +398,7 @@ app.delete('/api/classes/:classId/students/:studentId', async (req, res) => {
 });
 
 // Leave Class (Student)
-app.post('/api/classes/leave', async (req, res) => {
+router.post('/classes/leave', async (req, res) => {
     const { class_id, student_id } = req.body;
     try {
         await db.query("DELETE FROM class_enrollments WHERE class_id = ? AND student_id = ?", [class_id, student_id]);
@@ -408,7 +410,7 @@ app.post('/api/classes/leave', async (req, res) => {
 });
 
 // Get student's enrolled classes
-app.get('/api/classes/student/:studentId', async (req, res) => {
+router.get('/classes/student/:studentId', async (req, res) => {
     try {
         const result = await db.query(`
             SELECT c.*, u.ad || ' ' || u.soyad as hoca_adi
@@ -427,7 +429,7 @@ app.get('/api/classes/student/:studentId', async (req, res) => {
 // --- End Class Management Endpoints ---
 
 // Teacher: Get all assignments for a specific class
-app.get('/api/teacher/class/:classId/assignments', async (req, res) => {
+router.get('/teacher/class/:classId/assignments', async (req, res) => {
     try {
         const { classId } = req.params;
         const result = await db.query(`
@@ -446,7 +448,7 @@ app.get('/api/teacher/class/:classId/assignments', async (req, res) => {
 });
 
 // Books Endpoint
-app.get('/api/books', async (req, res) => {
+router.get('/books', async (req, res) => {
     try {
         const result = await db.query("SELECT * FROM books ORDER BY kitap_adi");
         res.json(result.rows);
@@ -457,7 +459,7 @@ app.get('/api/books', async (req, res) => {
 });
 
 // Students Endpoint
-app.get('/api/students', async (req, res) => {
+router.get('/students', async (req, res) => {
     try {
         const result = await db.query("SELECT user_id, ad, soyad FROM users WHERE rol = 'ogrenci' ORDER BY ad, soyad");
         res.json(result.rows);
@@ -468,7 +470,7 @@ app.get('/api/students', async (req, res) => {
 });
 
 // Create Assignment Endpoint
-app.post('/api/assignments', async (req, res) => {
+router.post('/assignments', async (req, res) => {
     let { user_id, book_id, book_name, due_date, assignment_type = 'book', title, description } = req.body;
 
     try {
@@ -504,7 +506,7 @@ app.post('/api/assignments', async (req, res) => {
 });
 
 // Create Class Assignment Endpoint
-app.post('/api/assignments/class', async (req, res) => {
+router.post('/assignments/class', async (req, res) => {
     let { class_id, book_id, book_name, due_date, assignment_type = 'book', title, description } = req.body;
 
     // Handle empty strings from frontend
@@ -545,7 +547,7 @@ app.post('/api/assignments/class', async (req, res) => {
 });
 
 // Student Assignments Endpoint
-app.get('/api/assignments/student/:userId', async (req, res) => {
+router.get('/assignments/student/:userId', async (req, res) => {
     const { userId } = req.params;
     const { class_id } = req.query;
     try {
@@ -595,7 +597,7 @@ app.get('/api/assignments/student/:userId', async (req, res) => {
 });
 
 // Submit Summary for Assignment
-app.post('/api/assignments/:id/summary', async (req, res) => {
+router.post('/assignments/:id/summary', async (req, res) => {
     const { id } = req.params;
     const { summary_text } = req.body;
     const assId = parseInt(id);
@@ -622,7 +624,7 @@ app.post('/api/assignments/:id/summary', async (req, res) => {
 });
 
 // Teacher: Get Pending Summaries (Assignments)
-app.get('/api/teacher/pending-summaries', async (req, res) => {
+router.get('/teacher/pending-summaries', async (req, res) => {
     const { class_id } = req.query;
     try {
         let query = `
@@ -654,7 +656,7 @@ app.get('/api/teacher/pending-summaries', async (req, res) => {
 });
 
 // Teacher: Get all graded summaries (assignments with 'completed' or 'rejected' status)
-app.get('/api/teacher/graded-summaries', async (req, res) => {
+router.get('/teacher/graded-summaries', async (req, res) => {
     const { class_id } = req.query;
     try {
         let query = `
@@ -686,7 +688,7 @@ app.get('/api/teacher/graded-summaries', async (req, res) => {
 });
 
 // Teacher: Approve Assignment
-app.post('/api/assignments/:id/approve', async (req, res) => {
+router.post('/assignments/:id/approve', async (req, res) => {
     const { id } = req.params;
     const { score } = req.body;
     const assId = parseInt(id);
@@ -726,7 +728,7 @@ app.post('/api/assignments/:id/approve', async (req, res) => {
 });
 
 // Teacher: Reject Assignment
-app.post('/api/assignments/:id/reject', async (req, res) => {
+router.post('/assignments/:id/reject', async (req, res) => {
     const { id } = req.params;
     const { feedback } = req.body;
     const assId = parseInt(id);
@@ -744,7 +746,7 @@ app.post('/api/assignments/:id/reject', async (req, res) => {
 });
 
 // Student Dashboard Stats Endpoint
-app.get('/api/dashboard/student/stats/:userId', async (req, res) => {
+router.get('/dashboard/student/stats/:userId', async (req, res) => {
     const { userId } = req.params;
     try {
         // Global retroactive badge check and fetch unseen
@@ -782,7 +784,7 @@ app.get('/api/dashboard/student/stats/:userId', async (req, res) => {
 });
 
 // All Badges Endpoint
-app.get('/api/badges', async (req, res) => {
+router.get('/badges', async (req, res) => {
     try {
         const result = await db.query("SELECT * FROM badges ORDER BY kategori");
         res.json(result.rows);
@@ -793,7 +795,7 @@ app.get('/api/badges', async (req, res) => {
 });
 
 // User Earned Badges Endpoint
-app.get('/api/badges/user/:userId', async (req, res) => {
+router.get('/badges/user/:userId', async (req, res) => {
     try {
         const result = await db.query(`
             SELECT b.*, ub.kazanim_tarihi 
@@ -812,7 +814,7 @@ app.get('/api/badges/user/:userId', async (req, res) => {
 // --- Weekly Tasks Endpoints ---
 
 // Get Tasks for Class
-app.get('/api/tasks/class/:classId', async (req, res) => {
+router.get('/tasks/class/:classId', async (req, res) => {
     const { classId } = req.params;
     const { student_id } = req.query; // Optional, to check completion status
 
@@ -849,7 +851,7 @@ app.get('/api/tasks/class/:classId', async (req, res) => {
 });
 
 // Create Task
-app.post('/api/tasks', async (req, res) => {
+router.post('/tasks', async (req, res) => {
     const { class_id, content } = req.body;
     if (!class_id || !content) return res.status(400).json({ error: 'Eksik bilgi.' });
 
@@ -866,7 +868,7 @@ app.post('/api/tasks', async (req, res) => {
 });
 
 // Delete Task
-app.delete('/api/tasks/:id', async (req, res) => {
+router.delete('/tasks/:id', async (req, res) => {
     const { id } = req.params;
     try {
         await db.query("DELETE FROM student_task_completions WHERE task_id = ?", [id]);
@@ -881,7 +883,7 @@ app.delete('/api/tasks/:id', async (req, res) => {
 // Toggle Task Completion (Student)
 
 // Toggle Task Completion (Student) - Supports optional response text
-app.post('/api/tasks/:id/toggle', async (req, res) => {
+router.post('/tasks/:id/toggle', async (req, res) => {
     const { id } = req.params;
     const { student_id, response_text } = req.body;
 
@@ -936,7 +938,7 @@ app.post('/api/tasks/:id/toggle', async (req, res) => {
 });
 
 // Get Task Completions (Teacher)
-app.get('/api/tasks/:id/completions', async (req, res) => {
+router.get('/tasks/:id/completions', async (req, res) => {
     const { id } = req.params;
     try {
         const result = await db.query(`
@@ -954,7 +956,7 @@ app.get('/api/tasks/:id/completions', async (req, res) => {
 });
 
 // Grade Task Completion (Teacher)
-app.post('/api/tasks/:id/grade', async (req, res) => {
+router.post('/tasks/:id/grade', async (req, res) => {
     const { id } = req.params;
     const { student_id, rating } = req.body;
 
@@ -977,7 +979,7 @@ app.post('/api/tasks/:id/grade', async (req, res) => {
 
 
 // Create Quote Endpoint
-app.post('/api/quotes', async (req, res) => {
+router.post('/quotes', async (req, res) => {
     let { user_id, book_id, book_name, icerik } = req.body;
 
     try {
@@ -1020,7 +1022,7 @@ app.post('/api/quotes', async (req, res) => {
 });
 
 // Leaderboard Endpoint
-app.get('/api/quotes/leaderboard', async (req, res) => {
+router.get('/quotes/leaderboard', async (req, res) => {
     try {
         const result = await db.query(`
             SELECT u.user_id, u.ad || ' ' || u.soyad as ogrenci_adi, COUNT(q.quote_id) as alinti_sayisi
@@ -1039,7 +1041,7 @@ app.get('/api/quotes/leaderboard', async (req, res) => {
 });
 
 // Approved Quotes Endpoint (Global Feed)
-app.get('/api/quotes/approved', async (req, res) => {
+router.get('/quotes/approved', async (req, res) => {
     const { user_id } = req.query; // Optional: check if current user liked
     try {
         const result = await db.query(`
@@ -1066,7 +1068,7 @@ app.get('/api/quotes/approved', async (req, res) => {
 });
 
 // Like/Unlike Toggle
-app.post('/api/quotes/:id/like', async (req, res) => {
+router.post('/quotes/:id/like', async (req, res) => {
     const quote_id = parseInt(req.params.id);
     const user_id = parseInt(req.body.user_id);
 
@@ -1106,7 +1108,7 @@ app.post('/api/quotes/:id/like', async (req, res) => {
 });
 
 // Add Comment
-app.post('/api/quotes/:id/comments', async (req, res) => {
+router.post('/quotes/:id/comments', async (req, res) => {
     const quote_id = parseInt(req.params.id);
     const user_id = parseInt(req.body.user_id);
     const { content, parent_id } = req.body;
@@ -1131,7 +1133,7 @@ app.post('/api/quotes/:id/comments', async (req, res) => {
 });
 
 // Get Comments
-app.get('/api/quotes/:id/comments', async (req, res) => {
+router.get('/quotes/:id/comments', async (req, res) => {
     const { id } = req.params;
     try {
         const result = await db.query(`
@@ -1155,7 +1157,7 @@ app.get('/api/quotes/:id/comments', async (req, res) => {
 });
 
 // Delete Comment (Teacher only)
-app.delete('/api/comments/:id', async (req, res) => {
+router.delete('/comments/:id', async (req, res) => {
     const { id } = req.params;
     const { teacher_id } = req.body;
 
@@ -1174,7 +1176,7 @@ app.delete('/api/comments/:id', async (req, res) => {
 });
 
 // Report Quote
-app.post('/api/quotes/:id/report', async (req, res) => {
+router.post('/quotes/:id/report', async (req, res) => {
     const { id } = req.params;
     const { user_id, reason } = req.body;
 
@@ -1193,7 +1195,7 @@ app.post('/api/quotes/:id/report', async (req, res) => {
 });
 
 // Reports
-app.get('/api/reports', async (req, res) => {
+router.get('/reports', async (req, res) => {
     const { class_id } = req.query;
     try {
         let query = `
@@ -1218,7 +1220,7 @@ app.get('/api/reports', async (req, res) => {
 });
 
 // Get user's own quotes sorted by latest comment
-app.get('/api/quotes/user/:userId', async (req, res) => {
+router.get('/quotes/user/:userId', async (req, res) => {
     const userId = parseInt(req.params.userId);
     try {
         const result = await db.query(`
@@ -1242,7 +1244,7 @@ app.get('/api/quotes/user/:userId', async (req, res) => {
 });
 
 // Teacher: Get Student Badge Summary
-app.get('/api/teacher/student-summary', async (req, res) => {
+router.get('/teacher/student-summary', async (req, res) => {
     try {
         const result = await db.query(`
             SELECT 
@@ -1265,7 +1267,7 @@ app.get('/api/teacher/student-summary', async (req, res) => {
 });
 
 // Teacher: Get Recent Badge Activity
-app.get('/api/teacher/badge-activity', async (req, res) => {
+router.get('/teacher/badge-activity', async (req, res) => {
     const { class_id } = req.query;
     try {
         let query = `
@@ -1289,7 +1291,7 @@ app.get('/api/teacher/badge-activity', async (req, res) => {
 });
 
 // Teacher: Get all assignments for a specific class
-app.get('/api/teacher/class/:classId/assignments', async (req, res) => {
+router.get('/teacher/class/:classId/assignments', async (req, res) => {
     try {
         const { classId } = req.params;
         const result = await db.query(`
@@ -1305,6 +1307,15 @@ app.get('/api/teacher/class/:classId/assignments', async (req, res) => {
         console.error(err);
         res.status(500).json({ error: 'Server error' });
     }
+});
+
+app.use('/api', router);
+app.use('/', router);
+
+// Error handler
+app.use((err, req, res, next) => {
+    console.error('SERVER ERROR:', err);
+    res.status(500).json({ error: 'Internal Server Error', message: err.message });
 });
 
 if (process.env.NODE_ENV !== 'production' || !process.env.NETLIFY) {
