@@ -30,7 +30,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, role }) => 
         <>
             <div style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                 <img
-                    src="/src/assets/logo.png"
+                    src="/logo.png"
                     alt="EK"
                     style={{
                         width: '2.5rem',

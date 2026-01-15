@@ -76,7 +76,7 @@ const Navbar: React.FC = () => {
                 {/* Logo Section */}
                 <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}>
                     <img
-                        src="/src/assets/logo.png"
+                        src="/logo.png"
                         alt="Logo"
                         style={{
                             height: '2.5rem',
